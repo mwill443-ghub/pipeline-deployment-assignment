@@ -89,6 +89,8 @@ an automatic deploy, with the Vercel project's Root Directory set to
 The frontend's API base URL field defaults to the Modal URL above and can
 be overridden at runtime without redeploying.
 
+Deployed at: **https://pipeline-deployment-assignment.vercel.app**
+
 ## Input validation and failure modes
 
 - Every field on `POST /similar-customers` is bounds-checked with Pydantic
