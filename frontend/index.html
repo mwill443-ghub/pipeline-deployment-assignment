@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Customer Similarity Finder</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <h1>Customer Similarity Finder</h1>
+    <p class="subtitle">
+      Backed by a fitted scikit-learn Pipeline (imputer + scaler + one-hot encoder +
+      TF-IDF + a custom recency transformer + TruncatedSVD) served from FastAPI on Modal.
+    </p>
+
+    <section class="card">
+      <label>
+        API base URL
+        <input id="apiBase" type="text" value="https://mwill443-ghub--pipeline-deployment-assignment-web.modal.run" />
+      </label>
+    </section>
+
+    <form id="profileForm" class="card">
+      <div class="grid">
+        <label>
+          Age
+          <input id="age" type="number" value="45" required />
+        </label>
+        <label>
+          State
+          <select id="state">
+            <option value="CA">CA</option>
+            <option value="NY">NY</option>
+          </select>
+        </label>
+        <label>
+          Income
+          <input id="income" type="number" value="50000" required />
+        </label>
+        <label>
+          Purchases
+          <input id="purchases" type="number" value="5" required />
+        </label>
+        <label>
+          Last purchase date
+          <input id="lastPurchaseDate" type="date" value="2021-07-15" />
+        </label>
+        <label>
+          Review text
+          <input id="review" type="text" value="Loved it!!!" />
+        </label>
+      </div>
+      <button type="submit">Find similar customers</button>
+    </form>
+
+    <section id="status" class="status"></section>
+
+    <div class="table-scroll">
+      <table id="results" class="results" hidden>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>State</th>
+            <th>Age</th>
+            <th>Income</th>
+            <th>Purchases</th>
+            <th>Review</th>
+            <th>Distance</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+{
+  "info": {
+    "name": "Customer Similarity API",
+    "description": "Endpoints for the fitted scikit-learn Pipeline served from FastAPI on Modal (Homework 4).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://mwill443-ghub--pipeline-deployment-assignment-web.modal.run"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Reports ok status', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.status).to.eql('ok');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Pipeline metadata",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Describes the fitted pipeline', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.have.property('steps');",
+              "    pm.expect(body).to.have.property('built_at');",
+              "    pm.expect(body).to.have.property('sklearn_version');",
+              "    pm.expect(body.steps).to.be.an('array').that.is.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/metadata",
+          "host": ["{{base_url}}"],
+          "path": ["metadata"]
+        }
+      }
+    },
+    {
+      "name": "List customers",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Returns a non-empty list of customers', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.be.an('array').that.is.not.empty;",
+              "    pm.expect(body[0]).to.have.property('CustomerID');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/customers",
+          "host": ["{{base_url}}"],
+          "path": ["customers"]
+        }
+      }
+    },
+    {
+      "name": "Find similar customers (valid input)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Returns the requested number of matches with distances', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.be.an('array').with.lengthOf(5);",
+              "    body.forEach((match) => {",
+              "        pm.expect(match).to.have.property('CustomerID');",
+              "        pm.expect(match).to.have.property('distance');",
+              "        pm.expect(match.distance).to.be.a('number');",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Age\": 45,\n  \"State\": \"CA\",\n  \"Income\": 50000,\n  \"Purchases\": 10,\n  \"LastPurchaseDate\": \"2021-07-15\",\n  \"Review\": \"Loved it!!!\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/similar-customers?k=5",
+          "host": ["{{base_url}}"],
+          "path": ["similar-customers"],
+          "query": [
+            {
+              "key": "k",
+              "value": "5"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Find similar customers (sparse profile)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Optional fields can be omitted', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.be.an('array').that.is.not.empty;",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Age\": 30,\n  \"State\": \"NY\",\n  \"Income\": 60000,\n  \"Purchases\": 1\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/similar-customers",
+          "host": ["{{base_url}}"],
+          "path": ["similar-customers"]
+        }
+      }
+    },
+    {
+      "name": "Find similar customers (invalid input)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 422', function () {",
+              "    pm.response.to.have.status(422);",
+              "});",
+              "pm.test('Response explains the validation error', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.have.property('detail');",
+              "});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Age\": -5,\n  \"State\": \"California\",\n  \"Income\": -1000,\n  \"Purchases\": -1,\n  \"LastPurchaseDate\": \"not-a-date\",\n  \"Review\": \"ok\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/similar-customers",
+          "host": ["{{base_url}}"],
+          "path": ["similar-customers"]
+        }
+      }
+    }
+  ]
+}
